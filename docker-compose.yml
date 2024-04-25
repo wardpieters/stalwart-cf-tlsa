@@ -1,0 +1,5 @@
+services:
+  tlsa-updater:
+    build: .
+    env_file:
+      - .env

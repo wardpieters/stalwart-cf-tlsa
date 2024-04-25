@@ -1,0 +1,7 @@
+venv/
+.idea/
+.DS_Store
+docker-compose.override.yml
+.env
+.env.*
+!.env.example
