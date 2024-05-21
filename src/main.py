@@ -19,22 +19,25 @@ def prepare_env():
     zone = os.getenv("CLOUDFLARE_ZONE")
     hostname = os.getenv("HOSTNAME")
     cloudflare_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    directory_id = os.getenv("STALWART_ACME_DIRECTORY_ID")
 
-    if not api_url or not username or not password or not zone or not hostname or not cloudflare_token:
-        error("Missing environment variable(s)")
+    exit = False
+    for env in ["STALWART_URL", "STALWART_USERNAME", "STALWART_PASSWORD", "CLOUDFLARE_ZONE", "HOSTNAME", "CLOUDFLARE_API_TOKEN"]:
+      if not os.getenv(env):
+        error(f"Missing environment var: {env}")
+        exit = True
+    if not os.getenv("STALWART_ACME_DIRECTORY_ID"):
+      error("Missing environment var: STALWART_ACME_DIRECTORY_ID - setting it to 'letsencrypt-dns-cf' for backward compatibility")
+      directory_id = "letsencrypt-dns-cf"
+    if exit:
+      sys.exit(1)
 
-        for env in ["STALWART_URL", "STALWART_USERNAME", "STALWART_PASSWORD", "CLOUDFLARE_ZONE", "HOSTNAME", "CLOUDFLARE_API_TOKEN"]:
-            if not os.getenv(env):
-                error(f"Missing: {env}")
-
-        sys.exit(1)
-
-    return api_url, username, password, zone, hostname
+    return api_url, username, password, zone, hostname, directory_id
 
 
 def run():
     log("Starting ...")
-    api_url, username, password, zone, hostname = prepare_env()
+    api_url, username, password, zone, hostname, directory_id = prepare_env()
 
     # Authenticate
     code = get_auth_code(api_url, username, password)
@@ -48,7 +51,7 @@ def run():
         return
 
     # Get certificate info from API
-    cert = get_acme_cert(api_url, access_token)
+    cert = get_acme_cert(api_url, access_token, directory_id)
     if not cert:
         error("Failed to get ACME cert")
         return
