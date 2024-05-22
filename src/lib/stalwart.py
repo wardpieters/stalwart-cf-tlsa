@@ -35,8 +35,8 @@ def get_access_token(api_url, code):
     return json["access_token"]
 
 
-def get_acme_cert(api_url, access_token):
-    res = requests.get(f"{api_url}/api/settings/list?prefix=acme.letsencrypt-dns-cf", headers={"Authorization": f"Bearer {access_token}"}, verify=False)
+def get_acme_cert(api_url, access_token, directory_id):
+    res = requests.get(f"{api_url}/api/settings/list?prefix=acme.{directory_id}", headers={"Authorization": f"Bearer {access_token}"}, verify=False)
     if res.status_code != 200:
         return False
 
