@@ -16,6 +16,3 @@ If you're using Docker to run Stalwart, you can add the following service to the
 ```
 
 In addition, you need to create a `.env` file in the same directory as the `docker-compose.yml` file with the contens of the `.env.example` file. Make sure to replace the placeholders with the actual values.
-
-> [!NOTE]
-> The ID of the ACME certificate should be set to `letsencrypt-dns-cf`.
